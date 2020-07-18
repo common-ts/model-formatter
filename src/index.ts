@@ -18,14 +18,14 @@ export interface Metadata {
 export interface MetaModel {
   model: Metadata;
   attributeName?: string;
-  dates?: string[];
-  integers?: string[];
-  numbers?: string[];
-  currencies?: string[];
-  phones?: string[];
-  faxes?: string[];
-  objects?: MetaModel[];
-  arrays?: MetaModel[];
+  dateFields?: string[];
+  integerFields?: string[];
+  numberFields?: string[];
+  currencyFields?: string[];
+  phoneFields?: string[];
+  faxFields?: string[];
+  objectFields?: MetaModel[];
+  arrayFields?: MetaModel[];
 }
 
 export interface Attribute {
@@ -121,17 +121,17 @@ function jsonToDate(obj, fields: string[]) {
 }
 
 export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
-  jsonToDate(obj, m.dates);
-  if (resources.removePhoneFormat && m.phones && m.phones.length > 0) {
-    for (const p of m.phones) {
+  jsonToDate(obj, m.dateFields);
+  if (resources.removePhoneFormat && m.phoneFields && m.phoneFields.length > 0) {
+    for (const p of m.phoneFields) {
       const v = obj[p];
       if (v) {
         obj[p] = resources.removePhoneFormat(v);
       }
     }
   }
-  if (resources.removeFaxFormat && m.faxes && m.faxes.length > 0) {
-    for (const p of m.faxes) {
+  if (resources.removeFaxFormat && m.faxFields && m.faxFields.length > 0) {
+    for (const p of m.faxFields) {
       const v = obj[p];
       if (v) {
         obj[p] = resources.removeFaxFormat(v);
@@ -140,9 +140,9 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
   }
   const r1 = resources.format1;
   const r2 = resources.format2;
-  if (m.integers) {
+  if (m.integerFields) {
     if (loc && loc.decimalSeparator !== '.') {
-      for (const p of m.integers) {
+      for (const p of m.integerFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -156,7 +156,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
         }
       }
     } else {
-      for (const p of m.integers) {
+      for (const p of m.integerFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -168,9 +168,9 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
       }
     }
   }
-  if (m.numbers) {
+  if (m.numberFields) {
     if (loc && loc.decimalSeparator !== '.') {
-      for (const p of m.numbers) {
+      for (const p of m.numberFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -190,7 +190,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
         }
       }
     } else {
-      for (const p of m.numbers) {
+      for (const p of m.numberFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -208,12 +208,12 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
       }
     }
   }
-  if (m.currencies) {
+  if (m.currencyFields) {
     if (cur) {
       cur = cur.toUpperCase();
     }
     if (loc && loc.decimalSeparator !== '.') {
-      for (const p of m.currencies) {
+      for (const p of m.currencyFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -236,7 +236,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
         }
       }
     } else {
-      for (const p of m.currencies) {
+      for (const p of m.currencyFields) {
         let v = obj[p];
         if (v) {
           v = '' + v;
@@ -257,15 +257,15 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
       }
     }
   }
-  if (m.objects) {
-    for (const objectField of m.objects) {
+  if (m.objectFields) {
+    for (const objectField of m.objectFields) {
       if (obj[objectField.attributeName]) {
         json(obj[objectField.attributeName], objectField, loc, cur);
       }
     }
   }
-  if (m.arrays) {
-    for (const arrayField of m.arrays) {
+  if (m.arrayFields) {
+    for (const arrayField of m.arrayFields) {
       if (obj[arrayField.attributeName]) {
         const arr = obj[arrayField.attributeName];
         if (Array.isArray(arr)) {
@@ -279,16 +279,16 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
 }
 
 export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, includingCurrencySymbol: boolean = false) {
-  if (resources.formatPhone && m.phones) {
-    for (const p of m.phones) {
+  if (resources.formatPhone && m.phoneFields) {
+    for (const p of m.phoneFields) {
       const v = obj[p];
       if (v) {
         obj[p] = resources.formatPhone(v);
       }
     }
   }
-  if (resources.formatFax && m.faxes) {
-    for (const p of m.faxes) {
+  if (resources.formatFax && m.faxFields) {
+    for (const p of m.faxFields) {
       const v = obj[p];
       if (v) {
         obj[p] = resources.formatFax(v);
@@ -296,8 +296,8 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
     }
   }
   if (resources.formatNumber) {
-    if (m.integers) {
-      for (const p of m.integers) {
+    if (m.integerFields) {
+      for (const p of m.integerFields) {
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
@@ -307,8 +307,8 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
         }
       }
     }
-    if (m.numbers) {
-      for (const p of m.numbers) {
+    if (m.numberFields) {
+      for (const p of m.numberFields) {
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
@@ -322,8 +322,8 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
         }
       }
     }
-    if (m.currencies) {
-      for (const p of m.currencies) {
+    if (m.currencyFields) {
+      for (const p of m.currencyFields) {
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
@@ -364,16 +364,16 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
       }
     }
   }
-  if (m.objects && m.objects.length > 0) {
-    for (const p of m.objects) {
+  if (m.objectFields && m.objectFields.length > 0) {
+    for (const p of m.objectFields) {
       const v = obj[p.attributeName];
       if (v) {
         format(v, p, loc, cur, includingCurrencySymbol);
       }
     }
   }
-  if (m.arrays) {
-    for (const p of m.arrays) {
+  if (m.arrayFields) {
+    for (const p of m.arrayFields) {
       const arr = obj[p.attributeName];
       if (arr && Array.isArray(arr)) {
         for (const a of arr) {
