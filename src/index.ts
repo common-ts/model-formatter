@@ -1,14 +1,5 @@
 export enum Format {
-  Currency = 'currency',
   Percentage = 'percentage',
-
-  Email = 'email',
-  Url = 'url',
-  Phone = 'phone',
-  Fax = 'fax',
-
-  IPv4 = 'ipv4',
-  IPv6 = 'ipv6',
 }
 
 export interface Metadata {
@@ -144,8 +135,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     if (loc && loc.decimalSeparator !== '.') {
       for (const p of m.integerFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           v = v.replace(r2, '');
           if (v.indexOf(loc.decimalSeparator) >= 0) {
             v = v.replace(loc.decimalSeparator, '.');
@@ -158,8 +148,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     } else {
       for (const p of m.integerFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           v = v.replace(r1, '');
           if (!isNaN(v)) {
             obj[p] = parseFloat(v);
@@ -172,8 +161,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     if (loc && loc.decimalSeparator !== '.') {
       for (const p of m.numberFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           v = v.replace(r2, '');
           if (v.indexOf(loc.decimalSeparator) >= 0) {
             v = v.replace(loc.decimalSeparator, '.');
@@ -192,8 +180,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     } else {
       for (const p of m.numberFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           v = v.replace(r1, '');
           if (v.indexOf('%') >= 0) {
             const attr: Attribute = m.model.attributes[p];
@@ -215,8 +202,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     if (loc && loc.decimalSeparator !== '.') {
       for (const p of m.currencyFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           if (resources.getCurrency && cur) {
             const currency = resources.getCurrency(cur);
             if (currency && v.indexOf(currency.currencySymbol) >= 0) {
@@ -238,8 +224,7 @@ export function json<T>(obj: T, m: MetaModel, loc: Locale, cur?: string) {
     } else {
       for (const p of m.currencyFields) {
         let v = obj[p];
-        if (v) {
-          v = '' + v;
+        if (v && typeof v === 'string') {
           v = v.replace(r1, '');
           if (resources.getCurrency && cur) {
             const currency = resources.getCurrency(cur);
