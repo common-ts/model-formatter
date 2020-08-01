@@ -21,6 +21,8 @@ export interface MetaModel {
 
 export interface Attribute {
   format?: Format;
+  key?: boolean;
+  version?: boolean;
   scale?: number;
   noformat?: boolean;
 }
@@ -67,11 +69,10 @@ export class resources {
     }
     return fax;
   }
-
 }
 
-const _datereg = '/Date(';
-const _re = /-?\d+/;
+const _rd = '/Date(';
+const _rn = /-?\d+/;
 
 function toDate(v: any): Date {
   if (!v || v === '') {
@@ -82,9 +83,9 @@ function toDate(v: any): Date {
   } else if (typeof v === 'number') {
     return new Date(v);
   }
-  const i = v.indexOf(_datereg);
+  const i = v.indexOf(_rd);
   if (i >= 0) {
-    const m = _re.exec(v);
+    const m = _rn.exec(v);
     const d = parseInt(m[0], null);
     return new Date(d);
   } else {
@@ -286,7 +287,7 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
-          if (attr && !attr.noformat) {
+          if (attr && !attr.noformat && !attr.key && !attr.version) {
             obj[p] = resources.formatNumber(v, attr.scale, loc);
           }
         }
@@ -297,7 +298,7 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
-          if (attr && !attr.noformat) {
+          if (attr && !attr.noformat && !attr.key && !attr.version) {
             let z = resources.formatNumber(v, attr.scale, loc);
             if (attr.format === Format.Percentage) {
               z = z + '%';
@@ -312,7 +313,7 @@ export function format<T>(obj: T, m: MetaModel, loc: Locale, cur?: string, inclu
         const v = obj[p];
         if (v && !isNaN(v)) {
           const attr: Attribute = m.model.attributes[p];
-          if (attr && !attr.noformat && (cur || attr.scale)) {
+          if (attr && !attr.noformat && (cur || attr.scale) && !attr.key && !attr.version) {
             let scale = attr.scale;
             let currency;
             if (resources.getCurrency && cur) {
