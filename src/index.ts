@@ -1,9 +1,26 @@
+export enum Type {
+  ObjectId = 'ObjectId',
+  Date = 'date',
+  Boolean = 'boolean',
+
+  Number = 'number',
+  Integer = 'integer',
+  String = 'string',
+  Text = 'text',
+
+  Object = 'object',
+  Array = 'array',
+  Primitives =  'primitives',
+  Binary = 'binary'
+}
 export enum Format {
   Percentage = 'percentage',
 }
 
 export interface Metadata {
-  attributes: any;
+  name?: string;
+  attributes: Attributes;
+  source?: string;
 }
 
 export interface MetaModel {
@@ -20,13 +37,16 @@ export interface MetaModel {
 }
 
 export interface Attribute {
+  type: Type;
   format?: Format;
   key?: boolean;
   version?: boolean;
   scale?: number;
   noformat?: boolean;
 }
-
+export interface Attributes {
+  [key: string]: Attribute;
+}
 export interface Currency {
   currencyCode?: string;
   decimalDigits: number;
@@ -52,10 +72,10 @@ export class resources {
   private static _preg = / |\-|\.|\(|\)/g;
   static format1 = / |,|\$|€|£|¥|'|٬|،| /g;
   static format2 = / |\.|\$|€|£|¥|'|٬|،| /g;
-  static getCurrency: (currencyCode: string) => Currency = null;
-  static formatNumber: (value: number, scale: number, locale: Locale) => string = null;
-  static formatPhone: (phone: string) => string = null;
-  static formatFax: (fax: string) => string = null;
+  static getCurrency: (currencyCode: string) => Currency;
+  static formatNumber: (value: number, scale: number, locale: Locale) => string;
+  static formatPhone: (phone: string) => string;
+  static formatFax: (fax: string) => string;
 
   static removePhoneFormat(phone: string): string {
     if (phone) {
